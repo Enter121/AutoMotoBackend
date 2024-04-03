@@ -1,9 +1,12 @@
 package me.yaacob.core.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name="cars")
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Car {
 
 

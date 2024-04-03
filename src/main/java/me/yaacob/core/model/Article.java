@@ -1,11 +1,13 @@
 package me.yaacob.core.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import me.yaacob.core.model.car_parameters.CarColor;
 import me.yaacob.core.model.car_parameters.FuelType;
 
 @Entity
 @Table(name="articles")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,6 +41,9 @@ public class Article {
     private String phoneNumber;
 
     private String author;
+
+    public Article() {
+    }
 
     public Long getId() {
         return id;
