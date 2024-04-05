@@ -1,28 +1,27 @@
-package me.yaacob.core.model;
+package me.yaacob.core.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
-import me.yaacob.core.dto.ArticleDTO;
+
+
+import me.yaacob.core.model.Article;
 import me.yaacob.core.model.car_parameters.CarColor;
 import me.yaacob.core.model.car_parameters.FuelType;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@Entity
-@Table(name="articles")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Article {
+public class ArticleDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    Map<String,String> blurHashes;
+    List<String> imagePaths;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    Car car;
+    Long articleId;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    List<ImagePackage> imageList;
+    String brand;
+
+    String model;
+
+    String type;
 
     private int price;
 
@@ -50,13 +49,15 @@ public class Article {
 
     private String author;
 
-    public Article() {
-    }
 
-    public Article(List<ImagePackage> imageList, Long id, Car car, int price, FuelType fuelType, CarColor carColor, int mileage, int year, String vin, String description, String version, int horsepower, int doors, int engineCapacity, String phoneNumber, String author) {
-        this.imageList=imageList;
-        this.id = id;
-        this.car = car;
+
+    public ArticleDTO(Long articleId, List<String> imagePaths, Map<String,String> blurHashes, String brand, String model, String type, int price, FuelType fuelType, CarColor carColor, int mileage, int year, String vin, String description, String version, int horsepower, int doors, int engineCapacity, String phoneNumber, String author) {
+        this.articleId = articleId;
+        this.imagePaths=imagePaths;
+        this.blurHashes = blurHashes;
+        this.brand = brand;
+        this.model = model;
+        this.type = type;
         this.price = price;
         this.fuelType = fuelType;
         this.carColor = carColor;
@@ -72,32 +73,47 @@ public class Article {
         this.author = author;
     }
 
-    public List<ImagePackage> getImageList() {
-        return imageList;
+
+    public static ArticleDTO map(Article article){
+
+        Map<String,String> blurHashes=new HashMap<>();
+        article.getImageList().forEach((v)->blurHashes.put(v.getPath(),v.getBlurHash()));
+
+        List<String> imagePaths=article.getImageList().stream().map(v->v.getPath()).toList();
+
+        return new ArticleDTO(article.getId(),imagePaths, blurHashes,article.getCar().getBrand(),article.getCar().getModel(),article.getCar().getType(),article.getPrice(),article.getFuelType(),article.getCarColor(),article.getMileage(),article.getYear(),article.getVin(),article.getDescription(),article.getVersion(),article.getHorsepower(),article.getDoors(),article.getEngineCapacity(),article.getPhoneNumber(),article.getAuthor());
     }
 
-    public void setImageList(List<ImagePackage> imageList) {
-        this.imageList = imageList;
+    public Long getArticleId() {
+        return articleId;
     }
 
-    public void addImage(ImagePackage imagePackage) {
-        this.imageList.add(imagePackage);
+    public void setArticleId(Long articleId) {
+        this.articleId = articleId;
     }
 
-    public Long getId() {
-        return id;
+    public String getBrand() {
+        return brand;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
-    public Car getCar() {
-        return car;
+    public String getModel() {
+        return model;
     }
 
-    public void setCar(Car car) {
-        this.car = car;
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public int getPrice() {
@@ -204,55 +220,19 @@ public class Article {
         this.author = author;
     }
 
-    public void update(ArticleDTO dto){
-        if(dto.getBrand()!=null) {
-            this.car.setBrand(dto.getBrand());
-        }
-        if(dto.getModel()!=null) {
-            this.car.setModel(dto.getModel());
-        }
-        if(dto.getType()!=null) {
-            this.car.setType(dto.getType());
-        }
-        if(dto.getPrice()!=0){
-        this.price = dto.getPrice();
-        }
-        if(dto.getFuelType()!=null) {
-            this.fuelType = dto.getFuelType();
-        }
-        if(dto.getCarColor()!=null) {
-            this.carColor = dto.getCarColor();
-        }
-        if(dto.getMileage()!=0) {
-            this.mileage = dto.getMileage();
-        }
-        if(dto.getYear()!=0) {
-            this.year = dto.getYear();
-        }
-        if(dto.getVin()!=null) {
-            this.vin = dto.getVin();
-        }
-        if(dto.getDescription()!=null) {
-            this.description = dto.getDescription();
-        }
-        if(dto.getVersion()!=null) {
-            this.version = dto.getVersion();
-        }
-        if(dto.getHorsepower()!=0) {
-            this.horsepower = dto.getHorsepower();
-        }
-        if(dto.getDoors()!=0) {
-            this.doors = dto.getDoors();
-        }
-        if(dto.getEngineCapacity()!=0) {
-            this.engineCapacity = dto.getEngineCapacity();
-        }
-        if(dto.getPhoneNumber()!=null) {
-            this.phoneNumber = dto.getPhoneNumber();
-        }
-        if(dto.getAuthor()!=null) {
-            this.author = dto.getAuthor();
-        }
+    public Map<String, String> getBlurHashes() {
+        return blurHashes;
     }
 
+    public void setBlurHashes(Map<String, String> blurHashes) {
+        this.blurHashes = blurHashes;
+    }
+
+    public List<String> getImagePaths() {
+        return imagePaths;
+    }
+
+    public void setImagePaths(List<String> imagePaths) {
+        this.imagePaths = imagePaths;
+    }
 }

@@ -1,17 +1,24 @@
 package me.yaacob.core.dto;
 
 
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import me.yaacob.core.model.Article;
 import me.yaacob.core.model.Car;
 import me.yaacob.core.model.car_parameters.FuelType;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class PreviewDTO {
 
-    public PreviewDTO(Long articleId, Car car, int price, FuelType fuelType, int year, int mileage) {
+
+    Map<String,String> blurHashes;
+    List<String> imagePaths;
+
+    public PreviewDTO(Long articleId, List<String> imagePaths, Map<String,String> blurHashes, Car car, int price, FuelType fuelType, int year, int mileage) {
         this.articleId = articleId;
+        this.imagePaths = imagePaths;
+        this.blurHashes = blurHashes;
         this.price = price;
         this.brand = car.getBrand();
         this.model = car.getModel();
@@ -39,7 +46,13 @@ public class PreviewDTO {
 
 
     public static PreviewDTO map(Article article){
-        return new PreviewDTO(article.getId(),article.getCar(),article.getPrice(),article.getFuelType(),article.getYear(),article.getMileage());
+
+        Map<String,String> blurHashes=new HashMap<>();
+        article.getImageList().forEach((v)->blurHashes.put(v.getPath(),v.getBlurHash()));
+
+        List<String> imagePaths=article.getImageList().stream().map(v->v.getPath()).toList();
+
+        return new PreviewDTO(article.getId(), imagePaths, blurHashes, article.getCar(),article.getPrice(),article.getFuelType(),article.getYear(),article.getMileage());
     }
 
 
@@ -97,5 +110,21 @@ public class PreviewDTO {
 
     public void setMileage(int mileage) {
         this.mileage = mileage;
+    }
+
+    public Map<String, String> getBlurHashes() {
+        return blurHashes;
+    }
+
+    public void setBlurHashes(Map<String, String> blurHashes) {
+        this.blurHashes = blurHashes;
+    }
+
+    public List<String> getImagePaths() {
+        return imagePaths;
+    }
+
+    public void setImagePaths(List<String> imagePaths) {
+        this.imagePaths = imagePaths;
     }
 }

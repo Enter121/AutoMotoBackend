@@ -20,6 +20,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation "io.trbl:blurhash:1.0.0"
+	implementation 'commons-io:commons-io:2.6'
 }
 
 tasks.named('test') {
